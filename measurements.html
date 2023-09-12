@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+<div id="details"></div>
+
+</body>
+</html>
+
+<script>
+let options = {
+  enableHighAccuracy: false,
+  timeout: 5000,
+  maximumAge: 0
+};
+
+let reqcount = 0;
+navigator.geolocation.watchPosition(successCallback, errorCallback, options);
+
+function successCallback(position) {
+  const { accuracy, latitude, longitude, altitude, heading, speed } = position.coords;
+
+  reqcount++;
+  details.innerHTML = "Accuracy: " + accuracy + "<br>";
+  details.innerHTML += "Latitude: " + latitude + " | Longitude: " + longitude + "<br>";
+  details.innerHTML += "Altitude: " + altitude + "<br>";
+  details.innerHTML += "Heading: " + heading + "<br>";
+  details.innerHTML += "Speed: " + speed + "<br>";
+  details.innerHTML += "reqcount: " + reqcount;
+}
+
+function errorCallback(error) {
+
+}
+</script>
