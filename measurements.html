@@ -9,6 +9,10 @@
 <body>
 <div id="details"></div>
 <div id="map"></div>
+
+<div id="show"><?php include 'LOG.txt' ; ?></div>
+
+
 </body>
 </html>
 
@@ -30,9 +34,15 @@ function successCallback(position) {
 
   
 }
-navigator.geolocation.getCurrentPosition(position => {
-    const { latitude, longitude } = position.coords;
-    // Show a map centered at latitude / longitude.
-    map.innerHTML= `<iframe width="700" height="300" src="https://maps.google.com/maps?q=${latitude},${longitude}&amp;z=15&amp;output=embed"></iframe>`;
-  });
+function updateMap() {
+    navigator.geolocation.getCurrentPosition(position => {
+      const { latitude, longitude } = position.coords;
+      // Show a map centered at latitude / longitude.
+      document.getElementById('map').innerHTML = `<iframe width="700" height="300" src="https://maps.google.com/maps?q=${latitude},${longitude}&amp;z=15&amp;output=embed"></iframe>`;
+    });
+  }
+
+  // Refresh the map every second (1000 milliseconds)
+  setInterval(updateMap, 1000);
+
 </script>
