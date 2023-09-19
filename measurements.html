@@ -3,46 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Measurmentes</title>
+    <title>Track to walk</title>
 </head>
-
 <body>
-<div id="details"></div>
-<div id="map"></div>
-
-<div id="show"><?php include 'LOG.txt' ; ?></div>
-
-
+    <div id="details"></div>
+    <div id="map"></div>
 </body>
 </html>
 
 <script>
+let map;
+let path = []; // To store the path coordinates
 let reqcount = 0;
-navigator.geolocation.watchPosition(successCallback);
+
+function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: 0, lng: 0 },
+        zoom: 15 // Adjust the zoom level as needed
+    });
+
+    navigator.geolocation.watchPosition(successCallback);
+}
 
 function successCallback(position) {
-  const { accuracy, latitude, longitude, altitude, heading, speed } = position.coords;
+    const { accuracy, latitude, longitude, altitude, heading, speed } = position.coords;
 
-  reqcount++;
-  details.innerHTML = "Accuracy: " + accuracy + "<br>";
-  details.innerHTML += "Latitude: " + latitude + "<br>";
-  details.innerHTML += "Longitude: " + longitude + "<br>";
-  details.innerHTML += "Altitude: " + altitude + "<br>";
-  details.innerHTML += "Heading: " + heading + "<br>";
-  details.innerHTML += "Speed: " + speed + "<br>";
-  details.innerHTML += "reqcount: " + reqcount;
+    reqcount++;
+    details.innerHTML = "Accuracy: " + accuracy + "<br>";
+    details.innerHTML += "Latitude: " + latitude + "<br>";
+    details.innerHTML += "Longitude: " + longitude + "<br>";
+    details.innerHTML += "Altitude: " + altitude + "<br>";
+    details.innerHTML += "Heading: " + heading + "<br>";
+    details.innerHTML += "Speed: " + speed + "<br>";
 
-  
+    // Add the current position to the path
+    path.push({ lat: latitude, lng: longitude });
+
+    // Update the map to show the path
+    updateMap();
 }
+
 function updateMap() {
-    navigator.geolocation.getCurrentPosition(position => {
-      const { latitude, longitude } = position.coords;
-      // Show a map centered at latitude / longitude.
-      document.getElementById('map').innerHTML = `<iframe width="700" height="300" src="https://maps.google.com/maps?q=${latitude},${longitude}&amp;z=15&amp;output=embed"></iframe>`;
-    });
-  }
+    if (map && path.length > 0) {
+        const polyline = new google.maps.Polyline({
+            path: path,
+            geodesic: true,
+            strokeColor: '#FF0000', // Red color for the line
+            strokeOpacity: 1.0,
+            strokeWeight: 2
+        });
 
-  // Refresh the map every second (1000 milliseconds)
-  setInterval(updateMap, 1000);
+        polyline.setMap(map);
 
+        // Center the map on the last recorded position
+        map.setCenter(path[path.length - 1]);
+    }
+}
+
+// Load the Google Maps JavaScript API with your API key
+function loadMapScript() {
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAV3sPIyfVMwHTR82Qz-snr8bzr2qn36Ug&callback=initMap`;
+    script.defer = true;
+    document.body.appendChild(script);
+}
+
+// Call the loadMapScript function to initialize the map
+loadMapScript();
 </script>
